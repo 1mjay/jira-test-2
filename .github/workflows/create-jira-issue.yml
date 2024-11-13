@@ -15,6 +15,10 @@ jobs:
           # 다른 팀원 추가 예정
 
     steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Check if issue creator is a team member
         id: check-user
         run: |
