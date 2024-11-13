@@ -25,7 +25,7 @@ jobs:
 
       - name: Login to Jira
         if: steps.check-user.outcome == 'success'
-        uses: atlassian/gajira-login@v3
+        uses: atlassian/gajira-login@v3.0.1
         env:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_API_TOKEN: ${{ secrets[format('JIRA_API_TOKEN_{0}', matrix.user_num)] }}
