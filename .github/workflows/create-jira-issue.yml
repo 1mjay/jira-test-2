@@ -15,10 +15,6 @@ jobs:
           # 다른 팀원 추가 예정
 
     steps:
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
       - name: Check if issue creator is a team member
         id: check-user
         run: |
@@ -29,7 +25,7 @@ jobs:
 
       - name: Login to Jira
         if: steps.check-user.outcome == 'success'
-        uses: atlassian/gajira-login@v3.0.1
+        uses: atlassian/gajira-login@master
         env:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_API_TOKEN: ${{ secrets[format('JIRA_API_TOKEN_{0}', matrix.user_num)] }}
