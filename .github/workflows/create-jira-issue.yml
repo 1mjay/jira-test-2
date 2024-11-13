@@ -9,8 +9,8 @@ jobs:
     strategy:
       matrix:
         team_member:
-          - { name: "1mjay", JIRA_API_TOKEN: "${{ secrets.JIRA_API_TOKEN_USER1 }}", JIRA_USER_EMAIL: "${{ secrets.JIRA_USER_EMAIL_USER1 }}" }
-          # 팀원 추가 예정
+          - "1mjay"
+            # 팀원 아이디만 추가 예정
 
     steps:
       - name: Check if issue creator is a team member
@@ -26,8 +26,8 @@ jobs:
         uses: atlassian/gajira-login@v3
         env:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-          JIRA_API_TOKEN: ${{ matrix.team_member.JIRA_API_TOKEN }}
-          JIRA_USER_EMAIL: ${{ matrix.team_member.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets['JIRA_API_TOKEN_' + matrix.team_member] }}
+          JIRA_USER_EMAIL: ${{ secrets['JIRA_USER_EMAIL_' + matrix.team_member] }}
 
       - name: Issue Parser
         uses: stefanbuck/github-issue-praser@v3
