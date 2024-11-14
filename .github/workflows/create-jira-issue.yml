@@ -53,7 +53,8 @@ jobs:
             {
               "parent": {
                 "key": "${{ steps.issue-parser.outputs.issueparser_parentKey }}"
-              }
+              },
+              "customfield_10001": "${{ github.actor }}"
             }
 
       - name: Log created issue
