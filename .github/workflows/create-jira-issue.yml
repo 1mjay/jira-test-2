@@ -115,11 +115,11 @@ jobs:
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
           
-          curl -X POST \
-          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
-          -d "{\"body\":\"브랜치가 생성되었습니다: [\`${BRANCH_NAME}\`](https://github.com/${{ github.repository }}/tree/${BRANCH_NAME})\"}"
+          gh api repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/timeline \
+            --method POST \
+            -f event_type="cross_referenced" \
+            -f source[type]="branch" \
+            -f source[reference]="${BRANCH_NAME}"
 
       - name: Add Labels to Issue
         env:
