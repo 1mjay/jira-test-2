@@ -109,6 +109,13 @@ jobs:
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
 
+      - name: Create Labels if not exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create "✨ Feature" --color "#FF00FF" --force || true
+        continue-on-error: true
+
       - name: Add Labels to Issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
