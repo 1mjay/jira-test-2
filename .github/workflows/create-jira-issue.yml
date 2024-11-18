@@ -117,7 +117,7 @@ jobs:
           
           gh issue develop ${{ github.event.issue.number }} \
             -n "${BRANCH_NAME}" \
-            --body-file <(echo "Branch: [\`${BRANCH_NAME}\`](https://github.com/${{ github.repository }}/tree/${BRANCH_NAME})") \
+            --base develop \
             --repo ${{ github.repository }}
 
       - name: Add Labels to Issue
