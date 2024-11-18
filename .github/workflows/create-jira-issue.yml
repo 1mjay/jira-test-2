@@ -115,11 +115,10 @@ jobs:
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
           
-          gh api repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/timeline \
-            --method POST \
-            -f event_type="cross_referenced" \
-            -f source[type]="branch" \
-            -f source[reference]="${BRANCH_NAME}"
+          gh issue develop ${{ github.event.issue.number }} \
+            --name "${BRANCH_NAME}" \
+            --base develop \
+            --repo ${{ github.repository }}
 
       - name: Add Labels to Issue
         env:
