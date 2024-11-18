@@ -15,18 +15,27 @@ jobs:
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
 
-      - name: Parse Issue Form
-        uses: stefanbuck/github-issue-praser@v3
-        id: issue-parser
-        with:
-          template-path: .github/ISSUE_TEMPLATE/issue_form.yml
+      - name: Extract Issue Form Values
+        id: extract-values
+        run: |
+          echo "Raw Issue Body:"
+          echo "${{ github.event.issue.body }}"
+
+          EPIC=$(echo "${{ github.event.issue.body }}" | sed -n '/### 🎟️ 상위 작업/,/###/p' | grep -v '###' | grep -oE '[A-Z]+-[0-9]+')
+          echo "epic=$EPIC" >> $GITHUB_OUTPUT
+
+          BRANCH=$(echo "${{ github.event.issue.body }}" | sed -n '/### 🌳 브랜치명(Branch)/,/###/p' | grep -v '###' | sed 's/^[[:space:]]*//')
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+          FEATURE=$(echo "${{ github.event.issue.body }}" | sed -n '/### ⚒️ 구현할 기능/,/###/p' | grep -v '###' | sed 's/^[[:space:]]*//')
+          echo "feature=$FEATURE" >> $GITHUB_OUTPUT
 
       - name: Log Parsed Values
         run: |
           echo "Parsed Issue Form Values:"
-          echo "Epic: ${{ steps.issue-parser.outputs.epic }}"
-          echo "Branch: ${{ steps.issue-parser.outputs.branch }}"
-          echo "Feature: ${{ steps.issue-parser.outputs.feature }}"
+          echo "Epic: ${{ steps.extract-values.outputs.epic }}"
+          echo "Branch: ${{ steps.extract-values.outputs.branch }}"
+          echo "Feature: ${{ steps.extract-values.outputs.feature }}"
 
       - name: Convert Markdown to Jira Syntax
         uses: peter-evans/jira2md@v1
@@ -82,7 +91,7 @@ jobs:
       - name: Create Branch
         run: |
           TICKET_NUMBER="${{ steps.create.outputs.issue }}"
-          BRANCH_INPUT="${{ steps.issue-parser.outputs.branch }}"
+          BRANCH_INPUT="${{ steps.extract-values.outputs.branch }}"
           BRANCH_NAME="${BRANCH_INPUT}/${TICKET_NUMBER}"
           echo "Generated Branch Name: ${BRANCH_NAME}"
           git checkout -b "${BRANCH_NAME}"
