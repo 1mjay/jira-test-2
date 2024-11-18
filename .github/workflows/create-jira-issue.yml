@@ -8,31 +8,27 @@ jobs:
     name: Create Jira issue
     runs-on: ubuntu-latest
     steps:
-      - name: Login
+      - name: Login to Jira
         uses: atlassian/gajira-login@v3
         env:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
 
-      - name: Issue Parser
+      - name: Parse Issue Form
         uses: stefanbuck/github-issue-praser@v3
         id: issue-parser
         with:
           template-path: .github/ISSUE_TEMPLATE/issue_form.yml
 
-      - name: Log Issue Parser
+      - name: Log Parsed Values
         run: |
-          echo "All parser outputs:"
-          echo "${{ toJSON(steps.issue-parser.outputs) }}"
-          echo "Parent Key value:"
-          echo "${{ steps.issue-parser.outputs.parentkey }}"
-          echo "Branch value:"
-          echo "${{ steps.issue-parser.outputs.branch }}"
-          echo "Raw issue body:"
-          echo "${{ github.event.issue.body }}"
+          echo "Parsed Issue Form Values:"
+          echo "Epic: ${{ steps.issue-parser.outputs.epic }}"
+          echo "Branch: ${{ steps.issue-parser.outputs.branch }}"
+          echo "Feature: ${{ steps.issue-parser.outputs.feature }}"
 
-      - name: Convert markdown to Jira Syntax
+      - name: Convert Markdown to Jira Syntax
         uses: peter-evans/jira2md@v1
         id: md2jira
         with:
@@ -43,23 +39,9 @@ jobs:
             ${{ github.event.issue.body }}
           mode: md2jira
 
-      - name: Extract Form Values
-        id: form
-        run: |
-          EPIC=$(echo "${{ github.event.issue.body }}" | sed -n '/### 🎟️ 상위 작업/,/###/p' | grep -v '###' | grep -oE '[A-Z]+-[0-9]+')
-          echo "epic=${EPIC}" >> $GITHUB_OUTPUT
-          
-          FEATURE=$(echo "${{ github.event.issue.body }}" | sed -n '/### ⚒️ 구현할 기능/,/###/p' | grep -v '###' | sed 's/^[[:space:]]*//' | tr -d '\n')
-          echo "feature=${FEATURE}" >> $GITHUB_OUTPUT
-            
-          echo "Extracted values:"
-          echo "Epic: ${EPIC}"
-          echo "Feature: ${FEATURE}"
-
-      - name: Create Issue
+      - name: Create Jira Issue
         id: create
         uses: atlassian/gajira-create@v3
-        continue-on-error: true
         with:
           project: SCRUM
           issuetype: Story
@@ -67,7 +49,7 @@ jobs:
           description: "${{ steps.md2jira.outputs.output-text }}"
           fields: |
             {
-              "customfield_10014": ${{ steps.form.outputs.epic }}",
+              "customfield_10014": "${{ steps.issue-parser.outputs.epic }}",
               "customfield_10037": "${{ github.actor }}"
             }
 
@@ -75,30 +57,18 @@ jobs:
         if: always()
         run: |
           echo "Create Issue result:"
-          echo "Success: ${{ steps.create.outcome == 'success' }}"
-          echo "Error: ${{ steps.create.error }}"
           echo "Outputs: ${{ toJSON(steps.create.outputs) }}"
+          echo "Error: ${{ steps.create.error }}"
 
-      - name: Log created issue
-        run: echo "Jira Issue ${{ steps.issue-parser.outputs.parentKey }}/${{ steps.create.outputs.issue }} was created"
-
-      - name: Checkout develop code
-        uses: actions/checkout@v4
-        with:
-          ref: develop
-
-      - name: Create branch with Ticket number
+      - name: Create Branch
         run: |
           TICKET_NUMBER="${{ steps.create.outputs.issue }}"
-          ISSUE_TITLE="${{ github.event.issue.title}}"
-          ISSUE_TITLE=$(echo ${ISSUE_TITLE} | sed 's/[^a-zA-Z0-9]/-/g')
-          BRANCH_NAME="dev/feature/${ISSUE_TITLE}/${TICKET_NUMBER}"
-          git checkout -b ${BRANCH_NAME}
-          git push origin ${BRANCH_NAME}
+          BRANCH_INPUT="${{ steps.issue-parser.outputs.branch }}"
+          
+          # 브랜치 이름 구성
+          BRANCH_NAME="${BRANCH_INPUT}/${TICKET_NUMBER}"
+          echo "Generated Branch Name: ${BRANCH_NAME}"
 
-      - name: Update issue title
-        uses: actions-cool/issues-helper@v3
-        with:
-          actions: "update-issue"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: "${{ steps.create.outputs.issue }} ${{ github.event.issue.title }}"
+          # 브랜치 생성 및 푸시
+          git checkout -b "${BRANCH_NAME}"
+          git push origin "${BRANCH_NAME}"
