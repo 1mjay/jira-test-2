@@ -1,42 +1,61 @@
-name: '이슈 생성'
-description: 'Repo에 이슈를 생성하며, 생성된 이슈는 Jira와 연동됩니다.'
+name: 'Feature request template'
+description: '기능 구현에 사용해주세요. 생성된 이슈는 Jira와 연동됩니다.'
 labels: [feat]
-title: '이슈 이름을 작성해주세요'
+title: ''
 body:
   - type: input
     id: parentKey
     attributes:
-      label: '상위 작업(Ticket Number)'
-      description: '상위 작업의 Ticket Number를 기입해주세요'
-      placeholder: 'JUJUTEST-00'
+      label: '🎟️ 상위 작업'
+      description: '상위 작업의 Ticket Number를 기입해주세요.'
+      placeholder: 'SCRUM-00'
     validations:
       required: true
 
   - type: input
     id: branch
     attributes:
-      label: '브랜치명(Branch)'
-      description: '영어 소문자로로 브랜치명을 작성해주세요 - 이 부분이 필요한 부분인가 확인 필요합니다.'
-    validations:
-      required: true
-
-  - type: input
-    id: description
-    attributes:
-      label: '상세 내용(Description)'
-      description: '이슈 내용을 자세히 설명해주세요'
-      value: |
-        - 상세 내용에 대해 작성해주세요.
+      label: '⚒️ 구현할 기능'
+      description: '구현할 기능을 간단히 적어주세요.'
+      placeholder: '회원 가입 기능 구현'
     validations:
       required: true
 
   - type: textarea
+    id: reason
+    attributes:
+      label: '🎯 기능이 필요한 이유'
+      description: '구현이 필요한 이유를 적어주세요.'
+      value: |
+
+    validations:
+      required: false
+
+  - type: textarea
     id: tasks
     attributes:
-      label: '체크리스트(Tasks)'
-      description: '해당 이슈에 대해 필요한 작업목록을 작성해주세요'
+      label: '📝 작업 상세 내용'
       value: |
-        - [ ] Task1
-        - [ ] Task2
+        - [ ] 내용 1
+        - [ ] 내용 2
     validations:
       required: true
+
+  - type: input
+    id: schedule
+    attributes:
+      label: '🗓️ 개발 일정'
+      description: '예상 기간을 작성해주세요.'
+      placeholder: '00월 00일 ~ 00월 00일'
+    validations:
+      required: false
+
+  - type: textarea
+    id: references
+    attributes:
+      label: '🌱 나누고 싶은 점'
+      description: '기능 관련 나누고 싶은 내용 작성해주세요. ex) 기능 구현에 참고한 내용 [링크](https://soo-develop.tistory.com/43)입니다.'
+      value: |
+          - Reference1
+    validations:
+      required: false
