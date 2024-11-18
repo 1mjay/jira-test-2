@@ -1,6 +1,6 @@
 name: 'Feature request template'
 description: '기능 구현에 사용해주세요. 생성된 이슈는 Jira와 연동됩니다.'
-labels: []
+labels: '✨ Feature'
 title: '[Feat]'
 body:
   - type: input
