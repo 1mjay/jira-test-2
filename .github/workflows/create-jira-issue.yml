@@ -27,11 +27,15 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
           EPIC_ISSUE_KEY="${{ steps.extract-values.outputs.epic }}"
 
-           BRANCH=$(echo "${{ github.event.issue.body }}" | sed -n '/### 🌳 브랜치명(Branch)/,/###/p' | grep -v '###' | tr -d '[:space:]')
-          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+          BRANCH=$(echo "${{ github.event.issue.body }}" | sed -n '/### 🌳 브랜치명(Branch)/,/###/p' | grep -v '###' | sed 's/^[[:space:]]*//')
+          echo "branch<<EOF" >> $GITHUB_OUTPUT
+          echo "$BRANCH" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
           FEATURE=$(echo "${{ github.event.issue.body }}" | sed -n '/### ⚒️ 구현할 기능/,/###/p' | grep -v '###' | sed 's/^[[:space:]]*//')
-          echo "feature=$FEATURE" >> $GITHUB_OUTPUT
+          echo "feature<<EOF" >> $GITHUB_OUTPUT
+          echo "$FEATURE" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Log Parsed Values
         run: |
