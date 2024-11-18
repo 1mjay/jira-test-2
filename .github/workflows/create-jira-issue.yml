@@ -102,13 +102,9 @@ jobs:
       - name: Create Branch
         run: |
           TICKET_NUMBER="${{ steps.create.outputs.issue }}"
-          # 줄바꿈과 공백 제거 후 양쪽 공백도 제거
-          BRANCH_INPUT=$(echo "${{ steps.extract-values.outputs.branch }}" | tr -d '\n\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+          BRANCH_INPUT=$(echo "${{ steps.extract-values.outputs.branch }}" | tr -d '\n\r' | tr -d ' ')
           BRANCH_NAME="${BRANCH_INPUT}/${TICKET_NUMBER}"
           echo "Generated Branch Name: ${BRANCH_NAME}"
-          # git 설정 추가
-          git config --global user.email "github-actions@github.com"
-          git config --global user.name "GitHub Actions"
-          # 브랜치 생성 및 푸시
+
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
