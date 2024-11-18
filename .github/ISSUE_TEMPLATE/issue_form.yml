@@ -4,7 +4,7 @@ labels: []
 title: '[Feat]'
 body:
   - type: input
-    id: ticketNumber
+    id: epic
     attributes:
       label: '🎟️ 상위 작업'
       description: '상위 작업의 Ticket Number를 기입해주세요.'
@@ -13,7 +13,7 @@ body:
       required: true
 
   - type: input
-    id: branch
+    id: feature
     attributes:
       label: '⚒️ 구현할 기능'
       description: '구현할 기능을 간단히 적어주세요.'
