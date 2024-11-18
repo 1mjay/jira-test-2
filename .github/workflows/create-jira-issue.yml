@@ -64,9 +64,28 @@ jobs:
           description: "${{ steps.md2jira.outputs.output-text }}"
           fields: |
             {
-              "customfield_10014": "${{ steps.extract-values.outputs.epic }}",
               "customfield_10037": "${{ github.actor }}"
             }
+
+      - name: Set Epic Link
+        run: |
+          STORY_ISSUE_KEY="${{ steps.create.outputs.issue }}"
+          EPIC_ISSUE_KEY="${{ steps.extract-values.outputs.epic }}"
+          
+          if [ ! -z "$EPIC_ISSUE_KEY" ]; then
+            echo "Setting Epic Link for ${STORY_ISSUE_KEY} to Epic ${EPIC_ISSUE_KEY}"
+          
+            curl -X PUT \
+            -H "Content-Type: application/json" \
+            -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+            -d '{
+              "fields": {
+                "parent": {
+                  "key": "'"${EPIC_ISSUE_KEY}"'"
+                }
+              }
+            }' "${{ secrets.JIRA_BASE_URL }}/rest/api/2/issue/${STORY_ISSUE_KEY}"
+          fi
 
       - name: Log Create Issue Result
         if: always()
