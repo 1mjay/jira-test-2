@@ -109,12 +109,13 @@ jobs:
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
 
-      - name: Create Labels if not exists
+      - name: Link Branch to Issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh label create "✨ Feature" --color "#FF00FF" --force || true
-        continue-on-error: true
+          gh issue develop ${{ github.event.issue.number }} \
+            --branch "feature/${BRANCH_INPUT}/${TICKET_NUMBER}" \
+            --repo ${{ github.repository }}
 
       - name: Add Labels to Issue
         env:
