@@ -46,10 +46,10 @@ jobs:
       - name: Extract Form Values
         id: form
         run: |
-          EPIC=$(echo "${{ github.event.issue.body }}" | sed -n '/### 🎟️ 상위 작업/,/###/p' | grep -v '###' | grep '[A-Z]' | tr -d '[:space:]')
+          EPIC=$(echo "${{ github.event.issue.body }}" | sed -n '/### 🎟️ 상위 작업/,/###/p' | grep -v '###' | grep -oE '[A-Z]+-[0-9]+')
           echo "epic=${EPIC}" >> $GITHUB_OUTPUT
           
-          FEATURE=$(echo "${{ github.event.issue.body }}" | sed -n '/### ⚒️ 구현할 기능/,/###/p' | grep -v '###' | grep '[가-힣a-zA-Z]' | tr -d '[:space:]')
+          FEATURE=$(echo "${{ github.event.issue.body }}" | sed -n '/### ⚒️ 구현할 기능/,/###/p' | grep -v '###' | sed 's/^[[:space:]]*//')
           echo "feature=${FEATURE}" >> $GITHUB_OUTPUT
             
           echo "Extracted values:"
@@ -67,7 +67,7 @@ jobs:
           description: "${{ steps.md2jira.outputs.output-text }}"
           fields: |
             {
-              "customfield_10014": ${{ steps.issue-parser.outputs.issueparser_epic }}",
+              "customfield_10014": ${{ steps.forms.outputs.epic }}",
               "customfield_10037": "${{ github.actor }}"
             }
 
