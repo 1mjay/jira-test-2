@@ -67,7 +67,7 @@ jobs:
           description: "${{ steps.md2jira.outputs.output-text }}"
           fields: |
             {
-              "customfield_10014": ${{ steps.forms.outputs.epic }}",
+              "customfield_10014": ${{ steps.form.outputs.epic }}",
               "customfield_10037": "${{ github.actor }}"
             }
 
