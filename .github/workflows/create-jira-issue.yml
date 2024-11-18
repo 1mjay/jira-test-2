@@ -43,6 +43,19 @@ jobs:
             ${{ github.event.issue.body }}
           mode: md2jira
 
+      - name: Extract Form Values
+        id: form
+        run: |
+          EPIC=$(echo "${{ github.event.issue.body }}" | grep -A 1 "🎟️ 상위 작업" | tail -n 1 | tr -d '[:space:]')
+          echo "epic=${EPIC}" >> $GITHUB_OUTPUT
+            
+          FEATURE=$(echo "${{ github.event.issue.body }}" | grep -A 1 "⚒️ 구현할 기능" | tail -n 1 | tr -d '[:space:]')
+          echo "feature=${FEATURE}" >> $GITHUB_OUTPUT
+            
+          echo "Extracted values:"
+          echo "Epic: ${EPIC}"
+          echo "Feature: ${FEATURE}"
+
       - name: Create Issue
         id: create
         uses: atlassian/gajira-create@v3
