@@ -42,14 +42,12 @@ jobs:
         uses: atlassian/gajira-create@v3
         with:
           project: SCRUM
-          issuetype: Sub-task
+          issuetype: Story
           summary: "${{ github.event.issue.title }}"
           description: "${{ steps.md2jira.outputs.output-text }}"
           fields: |
             {
-              "parent": {
-                "key": "${{ steps.issue-parser.outputs.issueparser_parentKey }}"
-              },
+              "customfield_10014": "${{ steps.issue-parser.outputs.issueparser_parentKey }}",
               "customfield_10037": "${{ github.actor }}"
             }
 
