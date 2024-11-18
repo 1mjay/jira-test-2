@@ -23,8 +23,14 @@ jobs:
 
       - name: Log Issue Parser
         run: |
-          echo '${{ steps.issue-parser.outputs.__ticket_number }}'
-          echo '${{ steps.issue-parser.outputs.jsonString }}'
+          echo "All parser outputs:"
+          echo "${{ toJSON(steps.issue-parser.outputs) }}"
+          echo "Parent Key value:"
+          echo "${{ steps.issue-parser.outputs.parentkey }}"
+          echo "Branch value:"
+          echo "${{ steps.issue-parser.outputs.branch }}"
+          echo "Raw issue body:"
+          echo "${{ github.event.issue.body }}"
 
       - name: Convert markdown to Jira Syntax
         uses: peter-evans/jira2md@v1
@@ -40,7 +46,7 @@ jobs:
       - name: Create Issue
         id: create
         uses: atlassian/gajira-create@v3
-        continue-on-error: true  # 에러가 나도 진행되도록
+        continue-on-error: true
         with:
           project: SCRUM
           issuetype: Story
