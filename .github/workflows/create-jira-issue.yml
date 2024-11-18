@@ -113,6 +113,7 @@ jobs:
           
           gh issue develop ${{ github.event.issue.number }} \
             -n "${BRANCH_NAME}" \
+            --base develop \
             --repo ${{ github.repository }}
 
       - name: Add Labels to Issue
