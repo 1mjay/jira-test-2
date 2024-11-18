@@ -20,11 +20,12 @@ jobs:
         run: |
           echo "Raw Issue Body:"
           echo "${{ github.event.issue.body }}"
-
+          
           EPIC=$(echo "${{ github.event.issue.body }}" | sed -n '/### 🎟️ 상위 작업/,/###/p' | grep -v '###' | grep -oE '[A-Z]+-[0-9]+')
           echo "epic<<EOF" >> $GITHUB_OUTPUT
           echo "$EPIC" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+          EPIC_ISSUE_KEY="${{ steps.extract-values.outputs.epic }}"
 
           BRANCH=$(echo "${{ github.event.issue.body }}" | sed -n '/### 🌳 브랜치명(Branch)/,/###/p' | grep -v '###' | sed 's/^[[:space:]]*//')
           echo "branch<<EOF" >> $GITHUB_OUTPUT
@@ -93,6 +94,11 @@ jobs:
           echo "Create Issue result:"
           echo "Outputs: ${{ toJSON(steps.create.outputs) }}"
           echo "Error: ${{ steps.create.error }}"
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: develop
 
       - name: Create Branch
         run: |
