@@ -54,12 +54,12 @@ jobs:
           description: "${{ steps.md2jira.outputs.output-text }}"
           fields: |
             {
-              "parent": {"key": "${{ steps.issue-parser.outputs.issueparser_parentKey }}"},
+              "parent": {"key": "${{ steps.issue-parser.outputs.issueparser_ticketNumber }}"},
               "customfield_10037": "${{ github.actor }}"
             }
 
-      - name: Log Create Issue Result  # 결과 로깅 추가
-        if: always()  # 항상 실행
+      - name: Log Create Issue Result
+        if: always()
         run: |
           echo "Create Issue result:"
           echo "Success: ${{ steps.create.outcome == 'success' }}"

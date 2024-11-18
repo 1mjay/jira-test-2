@@ -4,7 +4,7 @@ labels: []
 title: '[Feat]'
 body:
   - type: input
-    id: parentKey
+    id: ticketNumber
     attributes:
       label: '🎟️ 상위 작업'
       description: '상위 작업의 Ticket Number를 기입해주세요.'
