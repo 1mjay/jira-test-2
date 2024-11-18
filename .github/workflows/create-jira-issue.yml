@@ -49,7 +49,7 @@ jobs:
           EPIC=$(echo "${{ github.event.issue.body }}" | sed -n '/### 🎟️ 상위 작업/,/###/p' | grep -v '###' | grep -oE '[A-Z]+-[0-9]+')
           echo "epic=${EPIC}" >> $GITHUB_OUTPUT
           
-          FEATURE=$(echo "${{ github.event.issue.body }}" | sed -n '/### ⚒️ 구현할 기능/,/###/p' | grep -v '###' | sed 's/^[[:space:]]*//')
+          FEATURE=$(echo "${{ github.event.issue.body }}" | sed -n '/### ⚒️ 구현할 기능/,/###/p' | grep -v '###' | sed 's/^[[:space:]]*//' | tr -d '\n')
           echo "feature=${FEATURE}" >> $GITHUB_OUTPUT
             
           echo "Extracted values:"
