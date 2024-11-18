@@ -108,12 +108,16 @@ jobs:
           BRANCH_NAME="feature/${BRANCH_INPUT}/${TICKET_NUMBER}"
           echo "Generated Branch Name: ${BRANCH_NAME}"
 
+          # Git 설정 (GitHub Actions 봇으로 설정)
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
           
           gh issue develop ${{ github.event.issue.number }} \
             -n "${BRANCH_NAME}" \
-            --base develop \
+            --body-file <(echo "Branch: [\`${BRANCH_NAME}\`](https://github.com/${{ github.repository }}/tree/${BRANCH_NAME})") \
             --repo ${{ github.repository }}
 
       - name: Add Labels to Issue
