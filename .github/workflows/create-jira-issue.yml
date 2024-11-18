@@ -99,7 +99,7 @@ jobs:
         with:
           ref: develop
 
-      - name: Create Branch and Link to Issue
+      - name: Create Branch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -108,19 +108,8 @@ jobs:
           BRANCH_NAME="feature/${BRANCH_INPUT}/${TICKET_NUMBER}"
           echo "Generated Branch Name: ${BRANCH_NAME}"
 
-          # Git 설정 (GitHub Actions 봇으로 설정)
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
-          
-          gh api \
-            /repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/links \
-            --method POST \
-            -H "Accept: application/vnd.github.v3+json" \
-            -f link_type="branch" \
-            -f reference="${BRANCH_NAME}"
 
       - name: Add Labels to Issue
         env:
