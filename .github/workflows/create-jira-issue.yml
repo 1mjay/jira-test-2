@@ -115,9 +115,15 @@ jobs:
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
           
-          gh issue develop ${{ github.event.issue.number }} \
-            -n "${BRANCH_NAME}" \
-            --repo ${{ github.repository }}
+          gh api \
+            repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/timeline \
+            --method POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -f event="cross_referenced" \
+            -f source[type]="branch" \
+            -f source[owner]="${{ github.repository_owner }}" \
+            -f source[repo]="${{ github.event.repository.name }}" \
+            -f source[branch]="${BRANCH_NAME}"
 
       - name: Add Labels to Issue
         env:
