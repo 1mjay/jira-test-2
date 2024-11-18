@@ -116,8 +116,7 @@ jobs:
           git push origin "${BRANCH_NAME}"
           
           gh issue develop ${{ github.event.issue.number }} \
-            --name "${BRANCH_NAME}" \
-            --base develop \
+            -n "${BRANCH_NAME}" \
             --repo ${{ github.repository }}
 
       - name: Add Labels to Issue
