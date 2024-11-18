@@ -1,11 +1,11 @@
-name: Create Jira issue
+name: Create Jira Issue and Link to Epic
 on:
   issues:
     types:
       - opened
 jobs:
   create-issue:
-    name: Create Jira issue
+    name: Create Jira Issue and Link to Epic
     runs-on: ubuntu-latest
     steps:
       - name: Login to Jira
@@ -35,11 +35,10 @@ jobs:
           input-text: |
             ### Github Issue Link
             - ${{ github.event.issue.html_url }}
-
             ${{ github.event.issue.body }}
           mode: md2jira
 
-      - name: Create Jira Issue
+      - name: Create Jira Issue (Story)
         id: create
         uses: atlassian/gajira-create@v3
         with:
@@ -49,9 +48,29 @@ jobs:
           description: "${{ steps.md2jira.outputs.output-text }}"
           fields: |
             {
-              "customfield_10006": "${{ steps.issue-parser.outputs.epic }}",
               "customfield_10037": "${{ github.actor }}"
             }
+
+      - name: Link Story to Epic
+        id: link-issue
+        run: |
+          STORY_ISSUE_KEY="${{ steps.create.outputs.issue }}"
+          EPIC_ISSUE_KEY="${{ steps.issue-parser.outputs.epic }}"
+          
+          curl -X POST \
+          -H "Content-Type: application/json" \
+          -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+          -d '{
+            "type": {
+              "name": "Relates"
+            },
+            "inwardIssue": {
+              "key": "'"${STORY_ISSUE_KEY}"'"
+            },
+            "outwardIssue": {
+              "key": "'"${EPIC_ISSUE_KEY}"'"
+            }
+          }' "${{ secrets.JIRA_BASE_URL }}/rest/api/2/issueLink"
 
       - name: Log Create Issue Result
         if: always()
@@ -64,11 +83,7 @@ jobs:
         run: |
           TICKET_NUMBER="${{ steps.create.outputs.issue }}"
           BRANCH_INPUT="${{ steps.issue-parser.outputs.branch }}"
-          
-          # 브랜치 이름 구성
           BRANCH_NAME="${BRANCH_INPUT}/${TICKET_NUMBER}"
           echo "Generated Branch Name: ${BRANCH_NAME}"
-
-          # 브랜치 생성 및 푸시
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
