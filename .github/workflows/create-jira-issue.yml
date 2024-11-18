@@ -99,7 +99,9 @@ jobs:
         with:
           ref: develop
 
-      - name: Create Branch
+      - name: Create Branch and Link to Issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TICKET_NUMBER="${{ steps.create.outputs.issue }}"
           BRANCH_INPUT=$(echo "${{ steps.extract-values.outputs.branch }}" | tr -d '\n\r' | tr -d ' ')
@@ -108,13 +110,9 @@ jobs:
 
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
-
-      - name: Link Branch to Issue
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
+          
           gh issue develop ${{ github.event.issue.number }} \
-            -n "feature/${BRANCH_INPUT}/${TICKET_NUMBER}" \
+            -n "${BRANCH_NAME}" \
             --repo ${{ github.repository }}
 
       - name: Add Labels to Issue
