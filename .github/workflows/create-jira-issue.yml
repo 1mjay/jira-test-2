@@ -54,7 +54,7 @@ jobs:
           description: "${{ steps.md2jira.outputs.output-text }}"
           fields: |
             {
-              "parent": {"key": "${{ steps.issue-parser.outputs.issueparser_ticketNumber }}"},
+              "customfield_10014": ${{ steps.issue-parser.outputs.issueparser_ticketNumber }}",
               "customfield_10037": "${{ github.actor }}"
             }
 
