@@ -108,6 +108,7 @@ jobs:
           BRANCH_NAME="${BRANCH_INPUT}/${TICKET_NUMBER}"
           echo "Generated Branch Name: ${BRANCH_NAME}"
 
+          git checkout develop
           git checkout -b "develop/feature/${BRANCH_NAME}"
           git push origin "develop/feature/${BRANCH_NAME}"
 
