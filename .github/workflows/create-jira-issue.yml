@@ -105,11 +105,11 @@ jobs:
         run: |
           TICKET_NUMBER="${{ steps.create.outputs.issue }}"
           BRANCH_INPUT=$(echo "${{ steps.extract-values.outputs.branch }}" | tr -d '\n\r' | tr -d ' ')
-          BRANCH_NAME="feature/${BRANCH_INPUT}/${TICKET_NUMBER}"
+          BRANCH_NAME="${BRANCH_INPUT}/${TICKET_NUMBER}"
           echo "Generated Branch Name: ${BRANCH_NAME}"
 
-          git checkout -b "develop/${BRANCH_NAME}"
-          git push origin "develop/${BRANCH_NAME}"
+          git checkout -b "develop/feature/${BRANCH_NAME}"
+          git push origin "develop/feature/${BRANCH_NAME}"
 
       - name: Add Labels to Issue
         env:
