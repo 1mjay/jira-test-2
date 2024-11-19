@@ -109,6 +109,8 @@ jobs:
           echo "Generated Branch Name: ${BRANCH_NAME}"
 
           git checkout develop
+          git pull origin develop
+          
           git checkout -b "develop/feature/${BRANCH_NAME}"
           git push origin "develop/feature/${BRANCH_NAME}"
 
