@@ -111,7 +111,7 @@ jobs:
           git checkout develop
           git pull origin develop
           
-          git checkout -b "develop/feature/${BRANCH_NAME}"
+          git switch -c "develop/feature/${BRANCH_NAME}"
           git push origin "develop/feature/${BRANCH_NAME}"
 
       - name: Add Labels to Issue
